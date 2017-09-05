@@ -12,6 +12,7 @@ PaintedWidget::PaintedWidget()
 PaintedWidget::~PaintedWidget()
 {
     delete [] pointf;
+    delete tsp;
 }
 
 
@@ -32,6 +33,13 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
             pointf[i].setX(qrand()%700 + 1);
             pointf[i].setY(qrand()%500 + 1);
         }
+//        for(int i = 1; i < pointsNumber; i++)
+//        {
+//            if(i < 50)
+//            {
+
+//            }
+//        }
 
         painter.drawPoints(pointf, pointsNumber);
     }
@@ -44,6 +52,20 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         painter.setPen(pen); // 设置画笔
         painter.drawPoints(pointf, pointsNumber);
 
+        tsp = new Tsp(pointsNumber, pointf);
+        int answer = tsp->judge();
+
+        int t = 0;
+        while(t++ < tsp->MAXGENERATE)
+        {
+            tsp->choose();
+            tsp->breed();
+            tsp->variation();
+            answer = tsp->judge();
+        }
+
+        int *ans = tsp->getOrder(answer);
+
         // 反走样
         painter.setRenderHint(QPainter::Antialiasing, true);
         pen.setWidth(2);
@@ -53,9 +75,12 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         for(int i = 0; i < pointsNumber - 1; i++)
         {
             // 绘制直线
-            painter.drawLine(pointf[i], pointf[i + 1]);
+            painter.drawLine(pointf[ans[i]], pointf[ans[i + 1]]);
         }
-//        painter.drawLine(pointf[pointsNumber - 1], pointf[0]);
+        painter.drawLine(pointf[ans[pointsNumber - 1]], pointf[ans[0]]);
+
+        delete tsp;
+        delete [] ans;
     }
 
     QWidget::paintEvent(event);

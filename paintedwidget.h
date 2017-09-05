@@ -1,5 +1,6 @@
 #ifndef PAINTEDWIDGET_H
 #define PAINTEDWIDGET_H
+#include "tsp.h"
 #include <QWidget>
 #include <QPaintEvent>
 #include <QPainter>
@@ -27,6 +28,7 @@ private:
         bool readyToDrawPoints, readyToLink;
         int pointsNumber;
         QPointF *pointf;
+        Tsp *tsp;
 };
 
 #endif // PAINTEDWIDGET_H
