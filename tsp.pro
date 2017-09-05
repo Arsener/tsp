@@ -28,13 +28,15 @@ SOURCES += \
         mainwindow.cpp \
     paintedwidget.cpp \
     group.cpp \
-    tsp.cpp
+    tsp.cpp \
+    mythread.cpp
 
 HEADERS += \
         mainwindow.h \
     paintedwidget.h \
     group.h \
-    tsp.h
+    tsp.h \
+    mythread.h
 
 FORMS += \
         mainwindow.ui

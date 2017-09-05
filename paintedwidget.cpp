@@ -53,34 +53,8 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         painter.drawPoints(pointf, pointsNumber);
 
         tsp = new Tsp(pointsNumber, pointf);
-        int answer = tsp->judge();
-
-        int t = 0;
-        while(t++ < tsp->MAXGENERATE)
-        {
-            tsp->choose();
-            tsp->breed();
-            tsp->variation();
-            answer = tsp->judge();
-        }
-
-        int *ans = tsp->getOrder(answer);
-
-        // 反走样
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        pen.setWidth(2);
-        // 设置画笔颜色
-        painter.setPen(QColor(0, 160, 230));
-
-        for(int i = 0; i < pointsNumber - 1; i++)
-        {
-            // 绘制直线
-            painter.drawLine(pointf[ans[i]], pointf[ans[i + 1]]);
-        }
-        painter.drawLine(pointf[ans[pointsNumber - 1]], pointf[ans[0]]);
-
-        delete tsp;
-        delete [] ans;
+        MyThread *t = new MyThread(tsp, pointsNumber, pointf, this);
+        t->start();
     }
 
     QWidget::paintEvent(event);

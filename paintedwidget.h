@@ -1,6 +1,7 @@
 #ifndef PAINTEDWIDGET_H
 #define PAINTEDWIDGET_H
 #include "tsp.h"
+#include "mythread.h"
 #include <QWidget>
 #include <QPaintEvent>
 #include <QPainter>
