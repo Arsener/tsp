@@ -5,12 +5,16 @@
 #include <QPainter>
 #include <QPen>
 #include <QPointF>
+#include <QtGlobal>
+#include <QTime>
 
 class PaintedWidget : public QWidget
 {
 public:
         PaintedWidget();
+        ~PaintedWidget();
         void setDraw(bool flag);
+        void setLink(bool flag);
         void setPointsNumber(int number);
         int getPointsNumber();
 //public slots:
@@ -20,8 +24,9 @@ protected:
         void paintEvent(QPaintEvent *event);
 
 private:
-        bool readyToDraw;
+        bool readyToDrawPoints, readyToLink;
         int pointsNumber;
+        QPointF *pointf;
 };
 
 #endif // PAINTEDWIDGET_H

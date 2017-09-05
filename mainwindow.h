@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QString>
 #include <QMessageBox>
+#include <QPalette>
 
 namespace Ui {
 class MainWindow;
@@ -24,15 +25,17 @@ public:
 
 private slots:
     void startPainting();
+    void startLinking();
 
 private:
     Ui::MainWindow *ui;
-    QWidget *w;
-    PaintedWidget *paintedWidget;
-    QLineEdit *numberLineEdit;
-    QPushButton *button;
-    QVBoxLayout *vLayout;
-    QHBoxLayout *hLayout;
+    QWidget w;
+    PaintedWidget paintedWidget;
+    QLineEdit numberLineEdit;
+    QPushButton paintPointsButton;
+    QPushButton linkButton;
+    QVBoxLayout vLayout;
+    QHBoxLayout hLayout;
 };
 
 #endif // MAINWINDOW_H
