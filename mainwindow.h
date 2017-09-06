@@ -12,6 +12,8 @@
 #include <QString>
 #include <QMessageBox>
 #include <QPalette>
+#include <QTextStream>
+#include <QFile>
 
 namespace Ui {
 class MainWindow;
@@ -29,16 +31,10 @@ private slots:
     void startPainting();
     void startLinking(int *ans);
     void prepareLinking();
+    void setProgressBar(int value);
 
 private:
     Ui::MainWindow *ui;
-//    QWidget w;
-//    PaintedWidget paintedWidget;
-//    QLineEdit numberLineEdit;
-//    QPushButton paintPointsButton;
-//    QPushButton linkButton;
-//    QVBoxLayout vLayout;
-//    QHBoxLayout hLayout;
     MyThread *t;
     bool linking = false;
 };

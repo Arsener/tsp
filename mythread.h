@@ -19,6 +19,7 @@ public:
 
 signals:
     void returnResult(int*);
+    void returnProgress(int);
 
 
 protected:

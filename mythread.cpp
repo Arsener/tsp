@@ -25,6 +25,7 @@ void MyThread::run()
         tsp->breed();
         tsp->variation();
         answer = tsp->judge();
+        emit returnProgress(t);
     }
 
     this->ans = tsp->getOrder(answer);

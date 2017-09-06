@@ -7,36 +7,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//    w = new QWidget(this);
-//    setCentralWidget(&w);
-//    paintedWidget = new PaintedWidget();
-//    numberLineEdit = new QLineEdit();
-//    paintPointsButton = new QPushButton();
-//    linkButton = new QPushButton();
-//    vLayout = new QVBoxLayout();
-//    hLayout = new QHBoxLayout();
 
     QPalette Pal(palette()); // TODO: learn this
 
     Pal.setColor(QPalette::Background, Qt::white);
     ui->paintedWidget->setAutoFillBackground(true);
     ui->paintedWidget->setPalette(Pal);
-//    paintedWidget.show();
 
-//    paintPointsButton.setText("Start Painting!");
-//    linkButton.setText("Start Linking!");
-//    hLayout.addWidget(&numberLineEdit);
-//    hLayout.addWidget(&paintPointsButton);
-//    hLayout.addWidget(&linkButton);
-//    vLayout.addWidget(&paintedWidget);
-//    vLayout.addLayout(&hLayout);
+    ui->progressBar->setRange(0, Tsp::MAXGENERATE);
+    ui->progressBar->setValue(0);
     t = new MyThread();
 
     connect(ui->paintPointsButton, SIGNAL(clicked()), this, SLOT(startPainting()));
     connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(prepareLinking()));
     connect(t, SIGNAL(returnResult(int*)), this, SLOT(startLinking(int*)));
-
-//    w.setLayout(&vLayout);
+    connect(t, SIGNAL(returnProgress(int)), this, SLOT(setProgressBar(int)));
 }
 
 MainWindow::~MainWindow()
@@ -81,6 +66,7 @@ void MainWindow::startPainting()
             return;
         }
 
+        ui->progressBar->setValue(0);
         ui->paintedWidget->setPointsNumber(number, xPos, yPos);
         ui->paintedWidget->setDraw(true);
         ui->paintedWidget->setLink(false);
@@ -110,5 +96,27 @@ void MainWindow::startLinking(int *ans)
     ui->paintedWidget->setLinking(false);
     ui->paintedWidget->setLink(true);
     ui->paintedWidget->update();
+//    QFile f("d:\\city.txt");
+//    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
+//    {
+
+//    }
+//    else
+//    {
+//        f.open(QIODevice::WriteOnly | QIODevice::Text);
+//        QTextStream txtOutput(&f);
+//        QString s1("123");
+//        quint32 n1(123);
+
+//        txtOutput << s1 << '\n';
+//        txtOutput << n1 << '\n';
+
+//        f.close();
+//    }
     linking = false;
+}
+
+void MainWindow::setProgressBar(int value)
+{
+    ui->progressBar->setValue(value);
 }

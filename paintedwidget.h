@@ -22,8 +22,6 @@ public:
         int getPointsNumber();
         QPointF* getPoints();
         void setAns(int *ans);
-//public slots:
-//        void paintLines();
 
 protected:
         void paintEvent(QPaintEvent *event);
@@ -34,7 +32,6 @@ private:
         QPointF *pointf;
         int *ans;
         int xPos, yPos;
-//        Tsp *tsp;
 };
 
 #endif // PAINTEDWIDGET_H
