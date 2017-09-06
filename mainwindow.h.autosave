@@ -32,13 +32,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-//    QWidget w;
-//    PaintedWidget paintedWidget;
-//    QLineEdit numberLineEdit;
-//    QPushButton paintPointsButton;
-//    QPushButton linkButton;
-//    QVBoxLayout vLayout;
-//    QHBoxLayout hLayout;
     MyThread *t;
     bool linking = false;
 };

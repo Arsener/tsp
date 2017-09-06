@@ -14,7 +14,7 @@ public:
     Tsp(int pointsNumber, QPointF *pointf);
     ~Tsp();
 
-    const int MAXGENERATE = 1000;
+    const int MAXGENERATE = 10000;
     const double BREEDPRO = 0.8;  //交配概率
     const double VARIPRO = 0.05; //变异概率
     const static int GROUPNUM = 100;  //种群的大小

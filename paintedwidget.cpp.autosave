@@ -5,7 +5,6 @@ PaintedWidget::PaintedWidget(QWidget* w) : QWidget(w)
     readyToDrawPoints = false;
     readyToLink = false;
     linking = false;
-//    resize(8, 6);
 
 }
 
@@ -13,14 +12,12 @@ PaintedWidget::PaintedWidget(QWidget* w) : QWidget(w)
 PaintedWidget::~PaintedWidget()
 {
     delete [] pointf;
-//    delete tsp;
 }
 
 
 void PaintedWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-//    painter.setBrush(Qt::white);
 
     if(readyToDrawPoints)
     {
@@ -36,13 +33,6 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         }
         pointf[pointsNumber].setX(this->xPos);
         pointf[pointsNumber].setY(this->yPos);
-//        for(int i = 1; i < pointsNumber; i++)
-//        {
-//            if(i < 50)
-//            {
-
-//            }
-//        }
 
         painter.drawPoints(pointf, pointsNumber);
         painter.setPen(QPen(QColor(255, 0, 0), 6));
@@ -68,16 +58,6 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         painter.setPen(QPen(QColor(255, 0, 0), 6));
         painter.drawPoint(this->xPos, this->yPos);
 
-//        tsp = new Tsp(pointsNumber, pointf);
-//        MyThread *t = new MyThread(tsp, pointsNumber, pointf);
-//        t->start();
-//        int *ans = t->ans;
-
-//        t->quit();
-//        t->wait();
-//        delete t;
-
-        // TODO: 解决线程问题
         // 反走样
         painter.setRenderHint(QPainter::Antialiasing, true);
         pen.setWidth(2);
@@ -132,9 +112,3 @@ void PaintedWidget::setAns(int *ans)
 {
     this->ans = ans;
 }
-
-//void PaintedWidget::paintLines()
-//{
-//  readyToDraw = true;
-//  update(); // This forces a repaint of the widget with paintEvent()
-//}

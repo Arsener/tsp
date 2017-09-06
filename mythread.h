@@ -3,7 +3,6 @@
 
 #include "tsp.h"
 #include <QThread>
-#include <QWidget>
 #include <QLineEdit>
 #include <QPainter>
 #include <QPen>
@@ -11,8 +10,16 @@
 
 class MyThread : public QThread
 {
+    Q_OBJECT
+
 public:
-    MyThread(Tsp *tsp, int pointsNumber, QPointF *pointf, QWidget *w);
+    MyThread();
+    int *ans;
+    void setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf);
+
+signals:
+    void returnResult(int*);
+
 
 protected:
     void run();
@@ -21,7 +28,6 @@ private:
     Tsp *tsp;
     int pointsNumber;
     QPointF *pointf;
-    QWidget *w;
 };
 
 #endif // MYTHREAD_H
