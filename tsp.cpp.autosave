@@ -205,7 +205,7 @@ void Tsp::breed()
 
     double breedPro[GROUPNUM];//染色体的交配概率
     int breedFlag[GROUPNUM];//染色体的可交配情况
-    int flag = 0;
+//    int flag = 0;
     //初始化
     for (int i = 0; i < GROUPNUM; i++)
     {
