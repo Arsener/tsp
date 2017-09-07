@@ -38,7 +38,7 @@ Tsp::Tsp(int pointsNumber, QPointF *pointf)
 
     for (int i = 0; i < GROUPNUM; i++)
     {
-        //产生10个不相同的数字
+        //产生pointsNumber个不相同的数字
         for (int j = 0; j < pointsNumber; j++)
         {
             group[i].point[j] = j;
@@ -77,7 +77,6 @@ int Tsp::judge()
         }
         sumDistance += pointDistance[group[i].point[pointsNumber - 1]][group[i].point[0]];
         group[i].adapt = sumDistance; //每条染色体的路径总和
-                                      //printf("%d",group[i].adapt);
         maxDis += sumDistance; //种群的总路径
     }
     //计算染色体的幸存能力,路劲越短生存概率越大
@@ -228,7 +227,7 @@ void Tsp::breed()
             t++;
         }
     }
-    t -= t % 2;//t必须为偶数,产生t/2个0-9交配断点
+    t -= t % 2;//t必须为偶数,产生t/2个交配断点
     int dad = 0, mom = 0;     //temp1号染色体和temp2染色体交配
     for (int i = 0; i < t / 2; i++)  //如果有5个染色体需要交配，但是实际上t/2代表只有4个染色体会真正的交配，剩下的1个再加上5个不需要交配的染色体直接进入下一代。
     {
@@ -265,8 +264,7 @@ void Tsp::breed()
             map1[i] = -1;
             map2[i] = -1;
         }
-//        memset(map1, -1, sizeof(map1));
-//        memset(map2, -1, sizeof(map2));
+
         //断点之间的基因产生映射
         for (int j = head; j <= tail; j++)
         {
@@ -286,7 +284,7 @@ void Tsp::breed()
             group[dad].point[j] = group[mom].point[j];
             group[mom].point[j] = temp;
         }
-        //printf("处理冲突---------------------\n");
+
         //处理染色体1产生的冲突基因
         for (int j = 0; j < pointsNumber; j++)
         {
