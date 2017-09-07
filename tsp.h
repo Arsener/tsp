@@ -12,9 +12,9 @@ public:
     ~Tsp();
 
     const static int MAXGENERATE = 100;
-    const double BREEDPRO = 0.4;  //交配概率
-    const double VARIPRO = 0.02; //变异概率
-    const static int GROUPNUM = 10;  //种群的大小
+    const double BREEDPRO = 0.75;  //交配概率
+    const double VARIPRO = 0.04; //变异概率
+    const static int GROUPNUM = 50;  //种群的大小
     int judge();
     void choose();
     void variation();

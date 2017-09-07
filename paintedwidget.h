@@ -18,6 +18,7 @@ public:
         void setDraw(bool flag);
         void setLink(bool flag);
         void setLinking(bool flag);
+        void setPainted(bool flag);
         void setPointsNumber(int number, int xPos, int yPos);
         int getPointsNumber();
         QPointF* getPoints();
@@ -27,7 +28,7 @@ protected:
         void paintEvent(QPaintEvent *event);
 
 private:
-        bool readyToDrawPoints, readyToLink, linking;
+        bool readyToDrawPoints, readyToLink, linking, painted;
         int pointsNumber;
         QPointF *pointf;
         int *ans;

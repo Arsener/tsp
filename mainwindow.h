@@ -30,6 +30,7 @@ public:
     ~MainWindow();
 
 private slots:
+    void clean();
     void startPainting();
     void startLinking(int *ans);
     void prepareLinking();
@@ -39,6 +40,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     MyThread *t;
+    int pointNumber;
     bool linking = false;
     bool painted = false;
     QString fileDirectory;

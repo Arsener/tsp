@@ -66,9 +66,9 @@
    <widget class="QPushButton" name="paintPointsButton">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>560</x>
       <y>270</y>
-      <width>121</width>
+      <width>101</width>
       <height>51</height>
      </rect>
     </property>
@@ -84,9 +84,9 @@
    <widget class="QPushButton" name="linkButton">
     <property name="geometry">
      <rect>
-      <x>760</x>
+      <x>680</x>
       <y>270</y>
-      <width>121</width>
+      <width>101</width>
       <height>51</height>
      </rect>
     </property>
@@ -360,6 +360,24 @@
      <number>7</number>
     </property>
    </widget>
+   <widget class="QPushButton" name="cleanButton">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>270</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>17</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>清除画布</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -375,19 +393,28 @@
     <property name="title">
      <string>Set</string>
     </property>
-    <addaction name="setColorAction"/>
     <addaction name="setFileAction"/>
    </widget>
    <addaction name="menu"/>
   </widget>
-  <action name="setColorAction">
+  <action name="setRandomColorAction">
    <property name="text">
-    <string>Set Color</string>
+    <string>Set Random Points Color</string>
    </property>
   </action>
   <action name="setFileAction">
    <property name="text">
     <string>Set File Directory</string>
+   </property>
+  </action>
+  <action name="setPositionColor">
+   <property name="text">
+    <string>Set Your Position Color</string>
+   </property>
+  </action>
+  <action name="setLinesColor">
+   <property name="text">
+    <string>Set Lines Color</string>
    </property>
   </action>
  </widget>

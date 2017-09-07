@@ -5,7 +5,9 @@ PaintedWidget::PaintedWidget(QWidget* w) : QWidget(w)
     readyToDrawPoints = false;
     readyToLink = false;
     linking = false;
+    painted = false;
 
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 }
 
 
@@ -22,11 +24,8 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
 
     if(readyToDrawPoints)
     {
-        QPen pen;
         pointf = new QPointF[pointsNumber + 1];
-        pen.setWidth(6);
-        painter.setPen(pen); // 设置画笔
-        qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+        painter.setPen(QPen(QColor(0, 0, 0), 6)); // 设置画笔
         for (int i=0; i<pointsNumber; ++i)
         {
             pointf[i].setX(qrand()%500 + 1);
@@ -38,13 +37,13 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         painter.drawPoints(pointf, pointsNumber);
         painter.setPen(QPen(QColor(255, 0, 0), 6));
         painter.drawPoint(this->xPos, this->yPos);
+        readyToDrawPoints = false;
+        painted = true;
     }
 
-    if(linking)
+    if(linking || painted)
     {
-        QPen pen;
-        pen.setWidth(6);
-        painter.setPen(pen); // 设置画笔
+        painter.setPen(QPen(QColor(0, 0, 0), 6)); // 设置画笔
         painter.drawPoints(pointf, pointsNumber);
         painter.setPen(QPen(QColor(255, 0, 0), 6));
         painter.drawPoint(this->xPos, this->yPos);
@@ -61,9 +60,8 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
 
         // 反走样
         painter.setRenderHint(QPainter::Antialiasing, true);
-        pen.setWidth(2);
         // 设置画笔颜色
-        painter.setPen(QColor(0, 160, 230));
+        painter.setPen(QPen(QColor(0, 160, 230), 2));
 
         for(int i = 0; i < pointsNumber; i++)
         {
@@ -71,7 +69,7 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
             painter.drawLine(pointf[ans[i]], pointf[ans[i + 1]]);
         }
         painter.drawLine(pointf[ans[pointsNumber]], pointf[ans[0]]);
-
+        painted = false;
     }
 
     QWidget::paintEvent(event);
@@ -90,6 +88,11 @@ void PaintedWidget::setLink(bool flag)
 void PaintedWidget::setLinking(bool flag)
 {
     linking = flag;
+}
+
+void PaintedWidget::setPainted(bool flag)
+{
+    painted = flag;
 }
 
 void PaintedWidget::setPointsNumber(int number, int xPos, int yPos)

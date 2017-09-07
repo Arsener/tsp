@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     t = new MyThread();
 
+    connect(ui->cleanButton, SIGNAL(clicked()), this, SLOT(clean()));
     connect(ui->paintPointsButton, SIGNAL(clicked()), this, SLOT(startPainting()));
     connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(prepareLinking()));
     connect(t, SIGNAL(returnResult(int*)), this, SLOT(startLinking(int*)));
@@ -42,6 +43,24 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete t;
+}
+
+void MainWindow::clean()
+{
+    if(linking)
+    {
+        QMessageBox::warning(this, "Error!", "You can't clean now!");
+        return;
+    }
+    linking = false;
+    painted = false;
+    pointNumber = -1;
+    ui->paintedWidget->setLink(false);
+    ui->paintedWidget->setLinking(false);
+    ui->paintedWidget->setPainted(false);
+    ui->paintedWidget->setDraw(false);
+    ui->progressBar->setValue(0);
+    ui->paintedWidget->update();
 }
 
 void MainWindow::startPainting()
@@ -65,12 +84,12 @@ void MainWindow::startPainting()
             QMessageBox::warning(this, "Error!", "Please input your position!");
             return;
         }
-        int number = ui->numberLineEdit->text().toInt();
+        pointNumber = ui->numberLineEdit->text().toInt();
 
         int xPos = ui->xPosLineEdit->text().toInt();
         int yPos = ui->yPosLineEdit->text().toInt();
 
-        if(number < 0)
+        if(pointNumber < 0)
         {
             QMessageBox::warning(this, "Error!", "The number of points must be largger than 0 and less than 100!");
             return;
@@ -83,7 +102,7 @@ void MainWindow::startPainting()
         }
 
         ui->progressBar->setValue(0);
-        ui->paintedWidget->setPointsNumber(number, xPos, yPos);
+        ui->paintedWidget->setPointsNumber(pointNumber, xPos, yPos);
         ui->paintedWidget->setDraw(true);
         ui->paintedWidget->setLink(false);
         ui->paintedWidget->update();
@@ -107,8 +126,8 @@ void MainWindow::prepareLinking()
     linking = true;
     ui->paintedWidget->setDraw(false);
     ui->paintedWidget->setLinking(true);
-    Tsp *tsp = new Tsp(ui->numberLineEdit->text().toInt() + 1, ui->paintedWidget->getPoints());
-    t->setAttr(tsp, ui->numberLineEdit->text().toInt() + 1, ui->paintedWidget->getPoints());
+    Tsp *tsp = new Tsp(pointNumber + 1, ui->paintedWidget->getPoints());
+    t->setAttr(tsp, pointNumber + 1, ui->paintedWidget->getPoints());
     t->start();
 }
 
@@ -120,10 +139,8 @@ void MainWindow::startLinking(int *ans)
     ui->paintedWidget->update();
 
 
-    QString filename = QFileDialog::getSaveFileName(this,
-        tr("Save File"),
-        fileDirectory,
-        tr("*.txt")); //选择路径
+    linking = false;
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), fileDirectory, tr("*.txt")); //选择路径
     if(filename.isEmpty())
     {
         return;
@@ -140,10 +157,9 @@ void MainWindow::startLinking(int *ans)
             f.open(QIODevice::WriteOnly | QIODevice::Text);
 
             int startPoint;
-            int pointsNumber = ui->numberLineEdit->text().toInt() + 1;
-            for(int i = 0; i < pointsNumber; i++)
+            for(int i = 0; i < pointNumber + 1; i++)
             {
-                if(ans[i] == pointsNumber - 1)
+                if(ans[i] == pointNumber)
                 {
                     startPoint = i;
                     break;
@@ -151,21 +167,20 @@ void MainWindow::startLinking(int *ans)
             }
 
             QTextStream txtOutput(&f);
-            for(int i = startPoint; i < pointsNumber; i++)
+            for(int i = startPoint; i < pointNumber + 1; i++)
             {
-                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[i].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[i].ry()) + ")\n");
+                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[ans[i]].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[ans[i]].ry()) + ")\n");
                 txtOutput << currentPoint;
             }
             for(int i = 0; i < startPoint; i++)
             {
-                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[i].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[i].ry()) + ")\n");
+                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[ans[i]].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[ans[i]].ry()) + ")\n");
                 txtOutput << currentPoint;
             }
 
             f.close();
         }
     }
-    linking = false;
 }
 
 void MainWindow::setProgressBar(int value)
@@ -180,6 +195,7 @@ void MainWindow::setFileDirectory()
     {
         fileDirectory = tmpFileDirectory;
     }
+
     QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file directory.txt");
     if(!dirctoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
