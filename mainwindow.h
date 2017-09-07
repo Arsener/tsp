@@ -14,6 +14,8 @@
 #include <QPalette>
 #include <QTextStream>
 #include <QFile>
+#include <QPointF>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
@@ -32,11 +34,14 @@ private slots:
     void startLinking(int *ans);
     void prepareLinking();
     void setProgressBar(int value);
+    void setFileDirectory();
 
 private:
     Ui::MainWindow *ui;
     MyThread *t;
     bool linking = false;
+    bool painted = false;
+    QString fileDirectory;
 };
 
 #endif // MAINWINDOW_H

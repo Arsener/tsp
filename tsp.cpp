@@ -2,6 +2,7 @@
 
 Tsp::Tsp(int pointsNumber, QPointF *pointf)
 {
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     this->pointsNumber = pointsNumber;
     this->pointf = pointf;
 
@@ -44,9 +45,6 @@ Tsp::Tsp(int pointsNumber, QPointF *pointf)
         }
         for(int j = 0; j < pointsNumber; j++)
         {
-           QTime t;
-           t= QTime::currentTime();
-           qsrand(t.msec()+t.second()*1000);
            int r = j + qrand() % (pointsNumber - j);
            int temp = group[i].point[j];
            group[i].point[j] = group[i].point[r];
@@ -123,7 +121,6 @@ void Tsp::choose()
         gradient[i] = gradient[i - 1] + group[i].pro;
     }
 
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     //随机产生染色体的存活概率
     for (int i = 0; i < GROUPNUM; i++)
     {
@@ -166,7 +163,6 @@ void Tsp::choose()
     }
 }
 
-
 void Tsp::variation()
 {
     double variationPro[GROUPNUM]; //染色体的变异概率
@@ -177,7 +173,6 @@ void Tsp::variation()
     }
 
     //随机产生变异概率
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     for (int i = 0; i < GROUPNUM; i++)
     {
         variationPro[i] = (qrand() % 100) / 100.0;
@@ -191,7 +186,6 @@ void Tsp::variation()
         }
     }
     //变异操作,即交换染色体的两个节点
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     for (int i = 0; i < GROUPNUM; i++)
     {
         if (variationFlag[i] == 1)
@@ -204,7 +198,6 @@ void Tsp::variation()
         }
     }
 }
-
 
 void Tsp::breed()
 {
@@ -220,7 +213,6 @@ void Tsp::breed()
     }
 
     //随机产生交配概率
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     for (int i = 0; i < GROUPNUM; i++)
     {
         breedPro[i] = (qrand() % 100) / 100.0;
@@ -237,7 +229,6 @@ void Tsp::breed()
         }
     }
     t -= t % 2;//t必须为偶数,产生t/2个0-9交配断点
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     int dad = 0, mom = 0;     //temp1号染色体和temp2染色体交配
     for (int i = 0; i < t / 2; i++)  //如果有5个染色体需要交配，但是实际上t/2代表只有4个染色体会真正的交配，剩下的1个再加上5个不需要交配的染色体直接进入下一代。
     {
@@ -378,22 +369,3 @@ int* Tsp::getOrder(int answer)
     return group[answer].point;
 }
 
-// random_shuffle
-/*for (j = 0; j < CITIES;)
-{
-    t = rand() % CITIES;
-    flag = 1;
-    for (k = 0; k < j; k++)
-    {
-        if (group[i].city[k] == t)
-        {
-            flag = 0;
-            break;
-        }
-    }
-    if (flag)
-    {
-        group[i].city[j] = t;
-        j++;
-    }
-}*/

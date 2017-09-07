@@ -12,6 +12,7 @@ PaintedWidget::PaintedWidget(QWidget* w) : QWidget(w)
 PaintedWidget::~PaintedWidget()
 {
     delete [] pointf;
+    delete [] ans;
 }
 
 

@@ -14,6 +14,7 @@ class MyThread : public QThread
 
 public:
     MyThread();
+    ~MyThread();
     int *ans;
     void setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf);
 

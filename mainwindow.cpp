@@ -16,17 +16,32 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->progressBar->setRange(0, Tsp::MAXGENERATE);
     ui->progressBar->setValue(0);
+
+    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file directory.txt");
+    if(!dirctoryFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        return;
+    }
+    else
+    {
+        QTextStream txtInput(&dirctoryFile);
+        fileDirectory = txtInput.readLine();
+    }
+    dirctoryFile.close();
+
     t = new MyThread();
 
     connect(ui->paintPointsButton, SIGNAL(clicked()), this, SLOT(startPainting()));
     connect(ui->linkButton, SIGNAL(clicked()), this, SLOT(prepareLinking()));
     connect(t, SIGNAL(returnResult(int*)), this, SLOT(startLinking(int*)));
     connect(t, SIGNAL(returnProgress(int)), this, SLOT(setProgressBar(int)));
+    connect(ui->setFileAction, SIGNAL(triggered(bool)), this, SLOT(setFileDirectory()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete t;
 }
 
 void MainWindow::startPainting()
@@ -38,6 +53,7 @@ void MainWindow::startPainting()
     }
     else
     {
+        painted = true;
         if(ui->numberLineEdit->text() == "")
         {
             QMessageBox::warning(this, "Error!", "Please input the number!");
@@ -76,6 +92,12 @@ void MainWindow::startPainting()
 
 void MainWindow::prepareLinking()
 {
+    if(!painted)
+    {
+        QMessageBox::warning(this, "Error!", "Please paint some points first!");
+        return;
+    }
+
     if(linking)
     {
         QMessageBox::warning(this, "Error!", "I'm busy now!");
@@ -96,27 +118,78 @@ void MainWindow::startLinking(int *ans)
     ui->paintedWidget->setLinking(false);
     ui->paintedWidget->setLink(true);
     ui->paintedWidget->update();
-//    QFile f("d:\\city.txt");
-//    if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
-//    {
 
-//    }
-//    else
-//    {
-//        f.open(QIODevice::WriteOnly | QIODevice::Text);
-//        QTextStream txtOutput(&f);
-//        QString s1("123");
-//        quint32 n1(123);
 
-//        txtOutput << s1 << '\n';
-//        txtOutput << n1 << '\n';
+    QString filename = QFileDialog::getSaveFileName(this,
+        tr("Save File"),
+        fileDirectory,
+        tr("*.txt")); //选择路径
+    if(filename.isEmpty())
+    {
+        return;
+    }
+    else
+    {
+        QFile f(filename);
+        if(!f.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            return;
+        }
+        else
+        {
+            f.open(QIODevice::WriteOnly | QIODevice::Text);
 
-//        f.close();
-//    }
+            int startPoint;
+            int pointsNumber = ui->numberLineEdit->text().toInt() + 1;
+            for(int i = 0; i < pointsNumber; i++)
+            {
+                if(ans[i] == pointsNumber - 1)
+                {
+                    startPoint = i;
+                    break;
+                }
+            }
+
+            QTextStream txtOutput(&f);
+            for(int i = startPoint; i < pointsNumber; i++)
+            {
+                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[i].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[i].ry()) + ")\n");
+                txtOutput << currentPoint;
+            }
+            for(int i = 0; i < startPoint; i++)
+            {
+                QString currentPoint("(" + QString::number(ui->paintedWidget->getPoints()[i].rx()) + "," + QString::number(ui->paintedWidget->getPoints()[i].ry()) + ")\n");
+                txtOutput << currentPoint;
+            }
+
+            f.close();
+        }
+    }
     linking = false;
 }
 
 void MainWindow::setProgressBar(int value)
 {
     ui->progressBar->setValue(value);
+}
+
+void MainWindow::setFileDirectory()
+{
+    QString tmpFileDirectory = QFileDialog::getExistingDirectory(this, tr("Choose Directory"), fileDirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if(tmpFileDirectory.trimmed() != "")
+    {
+        fileDirectory = tmpFileDirectory;
+    }
+    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file directory.txt");
+    if(!dirctoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        return;
+    }
+    else
+    {
+        QTextStream txtoutput(&dirctoryFile);
+        QString dir(fileDirectory);
+        txtoutput << dir;
+    }
+    dirctoryFile.close();
 }

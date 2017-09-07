@@ -6,6 +6,14 @@ MyThread::MyThread()
 }
 
 
+MyThread::~MyThread()
+{
+    delete tsp;
+    delete [] ans;
+    delete [] pointf;
+}
+
+
 void MyThread::setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf)
 {
     this->tsp = tsp;
