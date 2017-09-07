@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(t, SIGNAL(returnResult(int*)), this, SLOT(startLinking(int*)));
     connect(t, SIGNAL(returnProgress(int)), this, SLOT(setProgressBar(int)));
     connect(ui->setFileAction, SIGNAL(triggered(bool)), this, SLOT(setFileDirectory()));
+    connect(ui->checkBox, SIGNAL(stateChanged(int)), this, SLOT(setChecked(int)));
 }
 
 MainWindow::~MainWindow()
@@ -140,6 +141,12 @@ void MainWindow::startLinking(int *ans)
 
 
     linking = false;
+
+    if(!file)
+    {
+        return;
+    }
+
     QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), fileDirectory, tr("*.txt")); //选择路径
     if(filename.isEmpty())
     {
@@ -208,4 +215,16 @@ void MainWindow::setFileDirectory()
         txtoutput << dir;
     }
     dirctoryFile.close();
+}
+
+void MainWindow::setChecked(int state)
+{
+    if (state == Qt::Checked) // "选中"
+    {
+        file = true;
+    }
+    else // 未选中 - Qt::Unchecked
+    {
+        file = false;
+    }
 }

@@ -29,7 +29,7 @@ void MyThread::run()
     int t = 0;
     while(t++ < tsp->MAXGENERATE)
     {
-        tsp->choose();
+        tsp->choose(t);
         tsp->breed();
         tsp->variation();
         answer = tsp->judge();

@@ -36,6 +36,7 @@ private slots:
     void prepareLinking();
     void setProgressBar(int value);
     void setFileDirectory();
+    void setChecked(int state);
 
 private:
     Ui::MainWindow *ui;
@@ -43,6 +44,7 @@ private:
     int pointNumber;
     bool linking = false;
     bool painted = false;
+    bool file = false;
     QString fileDirectory;
 };
 

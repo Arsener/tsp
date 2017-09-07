@@ -6,6 +6,8 @@ Tsp::Tsp(int pointsNumber, QPointF *pointf)
     this->pointsNumber = pointsNumber;
     this->pointf = pointf;
 
+    bestIndivisual.point = new int[pointsNumber];
+
     pointDistance = new double*[pointsNumber];
     for (int i = 0; i < pointsNumber; i++){
         pointDistance[i] = new double[pointsNumber];
@@ -102,64 +104,124 @@ int Tsp::judge()
     return bestSolution;
 }
 
-void Tsp::choose()
+void Tsp::choose(int t)
 {
-    double gradient[GROUPNUM];//梯度概率
-    double choosePro[GROUPNUM];//选择染色体的随机概率
-    int choosed[GROUPNUM];//选择了的染色体
-                  //初始化梯度概率
-    for (int i = 0; i < GROUPNUM; i++)
+    Group currentBest, currentWorst;
+    currentBest.point = new int[pointsNumber];
+    currentWorst.point = new int[pointsNumber];
+    int currentBestIndex = 0, currentWorstIndex = 0;
+    currentBest.adapt = group[0].adapt;
+    currentWorst.adapt = group[0].adapt;
+    for(int i = 0; i < GROUPNUM; i++)
     {
-        gradient[i] = 0.0;
-        choosePro[i] = 0.0;
-    }
-    gradient[0] = group[0].pro;
-
-    for (int i = 1; i < GROUPNUM; i++)
-    {
-        gradient[i] = gradient[i - 1] + group[i].pro;
-    }
-
-    //随机产生染色体的存活概率
-    for (int i = 0; i < GROUPNUM; i++)
-    {
-        choosePro[i] = (qrand() % 100) / 100.0;
-    }
-
-    //选择能生存的染色体
-    for (int i = 0; i < GROUPNUM; i++)
-    {
-        for (int j = 0; j < GROUPNUM; j++)
+        if(currentBest.adapt < group[i].adapt)
         {
-            if (choosePro[i] < gradient[j])
+            currentBest.adapt = group[i].adapt;
+            currentBest.pro = group[i].pro;
+            for(int j = 0;j<pointsNumber; j++)
             {
-                choosed[i] = j; //第i个位置存放第j个染色体
-                break;
+                currentBest.point[j] = group[i].point[j];
+            }
+            currentBestIndex = i;
+        }
+
+        if(currentWorst.adapt > group[i].adapt)
+        {
+            currentWorst.adapt = group[i].adapt;
+            currentWorst.pro = group[i].pro;
+            for(int j = 0;j<pointsNumber; j++)
+            {
+                currentWorst.point[j] = group[i].point[j];
+            }
+            currentWorstIndex = i;
+        }
+    }
+
+    if(t == 1)
+    {
+        bestIndivisual.adapt = currentBest.adapt;
+        bestIndivisual.pro = currentBest.pro;
+        for(int i = 0; i < pointsNumber; i++)
+        {
+            bestIndivisual.point[i] = currentBest.point[i];
+        }
+    }
+    else
+    {
+        if(bestIndivisual.adapt < currentBest.adapt)
+        {
+            bestIndivisual.adapt = currentBest.adapt;
+            bestIndivisual.pro = currentBest.pro;
+            for(int i = 0; i < pointsNumber; i++)
+            {
+                bestIndivisual.point[i] = currentBest.point[i];
             }
         }
     }
-    //拷贝种群
-    for (int i = 0; i < GROUPNUM; i++)
-    {
-        groupTemp[i].adapt = group[i].adapt;
-        groupTemp[i].pro = group[i].pro;
-        for (int j = 0; j < pointsNumber; j++)
-        {
-            groupTemp[i].point[j] = group[i].point[j];
-        }
-    }
-    //数据更新
-    for (int i = 0; i < GROUPNUM; i++)
-    {
-        int temp = choosed[i];
-        group[i].adapt = groupTemp[temp].adapt;
-        group[i].pro = groupTemp[temp].pro;
-        for (int j = 0; j < pointsNumber; j++)
-        {
-            group[i].point[j] = groupTemp[temp].point[j];
 
-        }
+    group[currentWorstIndex].adapt = bestIndivisual.adapt;
+    group[currentWorstIndex].pro = bestIndivisual.pro;
+    for(int i = 0;i < pointsNumber; i++)
+    {
+        group[currentWorstIndex].point[i] = bestIndivisual.point[i];
     }
+
+//    double gradient[GROUPNUM];//梯度概率
+//    double choosePro[GROUPNUM];//选择染色体的随机概率
+//    int choosed[GROUPNUM];//选择了的染色体
+//                  //初始化梯度概率
+//    for (int i = 0; i < GROUPNUM; i++)
+//    {
+//        gradient[i] = 0.0;
+//        choosePro[i] = 0.0;
+//    }
+//    gradient[0] = group[0].pro;
+
+//    for (int i = 1; i < GROUPNUM; i++)
+//    {
+//        gradient[i] = gradient[i - 1] + group[i].pro;
+//    }
+
+//    //随机产生染色体的存活概率
+//    for (int i = 0; i < GROUPNUM; i++)
+//    {
+//        choosePro[i] = (qrand() % 100) / 100.0;
+//    }
+
+//    //选择能生存的染色体
+//    for (int i = 0; i < GROUPNUM; i++)
+//    {
+//        for (int j = 0; j < GROUPNUM; j++)
+//        {
+//            if (choosePro[i] < gradient[j])
+//            {
+//                choosed[i] = j; //第i个位置存放第j个染色体
+//                break;
+//            }
+//        }
+//    }
+//    //拷贝种群
+//    for (int i = 0; i < GROUPNUM; i++)
+//    {
+//        groupTemp[i].adapt = group[i].adapt;
+//        groupTemp[i].pro = group[i].pro;
+//        for (int j = 0; j < pointsNumber; j++)
+//        {
+//            groupTemp[i].point[j] = group[i].point[j];
+//        }
+//    }
+//    //数据更新
+//    for (int i = 0; i < GROUPNUM; i++)
+//    {
+//        int temp = choosed[i];
+//        group[i].adapt = groupTemp[temp].adapt;
+//        group[i].pro = groupTemp[temp].pro;
+//        for (int j = 0; j < pointsNumber; j++)
+//        {
+//            group[i].point[j] = groupTemp[temp].point[j];
+
+//        }
+//    }
 }
 
 void Tsp::variation()
@@ -205,7 +267,7 @@ void Tsp::breed()
 
     double breedPro[GROUPNUM];//染色体的交配概率
     int breedFlag[GROUPNUM];//染色体的可交配情况
-    int flag = 0;
+//    int flag = 0;
     //初始化
     for (int i = 0; i < GROUPNUM; i++)
     {

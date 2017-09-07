@@ -16,7 +16,7 @@ public:
     const double VARIPRO = 0.04; //变异概率
     const static int GROUPNUM = 500;  //种群的大小
     int judge();
-    void choose();
+    void choose(int t);
     void variation();
     void breed();
     int* getOrder(int anwser);
@@ -27,6 +27,7 @@ private:
     Group group[GROUPNUM];
     Group groupTemp[GROUPNUM];
     QPointF *pointf;
+    Group bestIndivisual;
 };
 
 #endif // TSP_H
