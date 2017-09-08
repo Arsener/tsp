@@ -12,13 +12,14 @@ public:
     ~Tsp();
 
     const static int MAXGENERATE = 5000;
-    const double BREEDPRO = 0.75;  //交配概率
-    const double VARIPRO = 0.04; //变异概率
+    const double BREEDPRO = 0.8;  //交配概率
+    const double VARIPRO = 0.05; //变异概率
     const static int GROUPNUM = 500;  //种群的大小
     int judge();
     void choose(int t);
     void variation();
     void breed();
+    double getDis(int *gene);
     int* getOrder(int anwser);
 
 private:

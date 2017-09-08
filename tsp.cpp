@@ -387,6 +387,49 @@ void Tsp::breed()
                 map2[cur] = 1;
             }
         }
+
+        double disDad = getDis(parent1);
+        double disMom = getDis(parent2);
+        double disSon1 = getDis(group[dad].point);
+        double disSon2 = getDis(group[mom].point);
+
+        if (tail - head < pointsNumber / 2)
+        {
+            if (disDad < disSon1)
+            {
+                for (int j = 0; j < pointsNumber; j++)
+                {
+                    group[dad].point[j] = parent1[j];
+                }
+            }
+
+            if (disMom < disSon2)
+            {
+                for (int j = 0; j < pointsNumber; j++)
+                {
+                    group[mom].point[j] = parent2[j];
+                }
+            }
+        }
+        else
+        {
+            if (disDad < disSon2)
+            {
+                for (int j = 0; j < pointsNumber; j++)
+                {
+                    group[mom].point[j] = parent1[j];
+                }
+            }
+
+            if (disMom < disSon1)
+            {
+                for (int j = 0; j < pointsNumber; j++)
+                {
+                    group[dad].point[j] = parent2[j];
+                }
+            }
+        }
+
         delete [] parent1;
         delete [] parent2;
 
@@ -399,5 +442,17 @@ void Tsp::breed()
 int* Tsp::getOrder(int answer)
 {
     return group[answer].point;
+}
+
+double Tsp::getDis(int *gene)
+{
+    double sumDistance = 0;
+    for (int j = 1; j < pointsNumber; j++)
+    {
+        sumDistance += pointDistance[gene[j - 1]][gene[j]];
+    }
+    sumDistance += pointDistance[gene[pointsNumber - 1]][gene[0]];
+
+    return sumDistance;
 }
 
