@@ -15,20 +15,19 @@ class MyThread : public QThread
 public:
     MyThread();
     ~MyThread();
-    int *ans;
     void setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf);
 
 signals:
     void returnResult(int*);
     void returnProgress(int);
 
-
 protected:
     void run();
 
 private:
-    Tsp *tsp;
     int pointsNumber;
+    int *ans;
+    Tsp *tsp;
     QPointF *pointf;
 };
 

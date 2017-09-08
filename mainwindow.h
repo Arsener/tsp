@@ -1,20 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include "paintedwidget.h"
-#include "mythread.h"
 #include "tsp.h"
+#include "mythread.h"
+#include "paintedwidget.h"
+#include <QFile>
+#include <QPointF>
+#include <QString>
+#include <QPalette>
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QString>
 #include <QMessageBox>
-#include <QPalette>
 #include <QTextStream>
-#include <QFile>
-#include <QPointF>
 #include <QFileDialog>
 
 namespace Ui {
@@ -32,19 +32,19 @@ public:
 private slots:
     void clean();
     void startPainting();
-    void startLinking(int *ans);
     void prepareLinking();
-    void setProgressBar(int value);
     void setFileDirectory();
     void setChecked(int state);
+    void startLinking(int *ans);
+    void setProgressBar(int value);
 
 private:
     Ui::MainWindow *ui;
-    MyThread *t;
     int pointNumber;
     bool linking = false;
     bool painted = false;
     bool file = false;
+    MyThread *t;
     QString fileDirectory;
 };
 

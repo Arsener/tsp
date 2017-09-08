@@ -2,17 +2,18 @@
 
 Tsp::Tsp(int pointsNumber, QPointF *pointf)
 {
+    // 随机数种子
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     this->pointsNumber = pointsNumber;
     this->pointf = pointf;
 
-    bestIndivisual.point = new int[pointsNumber];
-
+    // 动态分配二维数组
     pointDistance = new double*[pointsNumber];
     for (int i = 0; i < pointsNumber; i++){
         pointDistance[i] = new double[pointsNumber];
     }
 
+    // 设置距离矩阵
     for (int m = 0; m < pointsNumber; m++) {
         for (int n = 0; n < pointsNumber; n++) {
             if (m == n)
@@ -27,24 +28,23 @@ Tsp::Tsp(int pointsNumber, QPointF *pointf)
         }
     }
 
-    for (int i = 0; i < GROUPNUM; i++)  //初始化
+    // 初始化种群
+    for (int i = 0; i < GROUPNUM; i++)
     {
         group[i].point = new int[pointsNumber];
         groupTemp[i].point = new int[pointsNumber];
+
+        // 种群基因数组group[i].point存点的序号
         for (int j = 0; j < pointsNumber; j++)
         {
-            group[i].point[j] = -1;
+            group[i].point[j] = j;
             groupTemp[i].point[j] = -1;
         }
     }
 
+    // 打乱基因数组
     for (int i = 0; i < GROUPNUM; i++)
     {
-        //产生pointsNumber个不相同的数字
-        for (int j = 0; j < pointsNumber; j++)
-        {
-            group[i].point[j] = j;
-        }
         for(int j = 0; j < pointsNumber; j++)
         {
            int r = j + qrand() % (pointsNumber - j);
@@ -65,6 +65,7 @@ Tsp::~Tsp()
     delete [] pointDistance;
 }
 
+// 评价函数
 int Tsp::judge()
 {
     double sumDistance;
@@ -78,21 +79,23 @@ int Tsp::judge()
             sumDistance += pointDistance[group[i].point[j - 1]][group[i].point[j]];
         }
         sumDistance += pointDistance[group[i].point[pointsNumber - 1]][group[i].point[0]];
-        group[i].adapt = sumDistance; //每条染色体的路径总和
-        maxDis += sumDistance; //种群的总路径
+        group[i].adapt = sumDistance; // 每条染色体的路径总和
+        maxDis += sumDistance; // 种群的总路径
     }
-    //计算染色体的幸存能力,路劲越短生存概率越大
+
+    // 计算染色体的幸存能力，路径越短生存概率越大
     for (int i = 0; i < GROUPNUM; i++)
     {
         group[i].pro = 1 - group[i].adapt / maxDis;
         maxPro += group[i].pro;
     }
 
+    //在种群中的幸存概率,总和为1
     for (int i = 0; i < GROUPNUM; i++) {
         group[i].pro = group[i].pro / maxPro;
-    }//在种群中的幸存概率,总和为1
-     //求最佳路径
+    }
 
+    //求最佳路径
     int bestSolution = 0;
     for (int i = 0; i < GROUPNUM; i++)
     {
@@ -101,144 +104,93 @@ int Tsp::judge()
             bestSolution = i;
         }
     }
+
     return bestSolution;
 }
 
-void Tsp::choose(int t)
+// 选择函数
+void Tsp::choose()
 {
-    Group currentBest, currentWorst;
-    currentBest.point = new int[pointsNumber];
-    currentWorst.point = new int[pointsNumber];
-    int currentBestIndex = 0, currentWorstIndex = 0;
-    currentBest.adapt = group[0].adapt;
-    currentWorst.adapt = group[0].adapt;
-    for(int i = 0; i < GROUPNUM; i++)
-    {
-        if(currentBest.adapt < group[i].adapt)
-        {
-            currentBest.adapt = group[i].adapt;
-            currentBest.pro = group[i].pro;
-            for(int j = 0;j<pointsNumber; j++)
-            {
-                currentBest.point[j] = group[i].point[j];
-            }
-            currentBestIndex = i;
-        }
+    double gradient[GROUPNUM];// 梯度概率
+    double choosePro[GROUPNUM];// 选择染色体的随机概率
+    int choosed[GROUPNUM];// 选择了的染色体
 
-        if(currentWorst.adapt > group[i].adapt)
-        {
-            currentWorst.adapt = group[i].adapt;
-            currentWorst.pro = group[i].pro;
-            for(int j = 0;j<pointsNumber; j++)
-            {
-                currentWorst.point[j] = group[i].point[j];
-            }
-            currentWorstIndex = i;
-        }
+    // 初始化梯度概率，利用轮盘赌模型
+    for (int i = 0; i < GROUPNUM; i++)
+    {
+        gradient[i] = 0.0;
+        choosePro[i] = 0.0;
+    }
+    gradient[0] = group[0].pro;
+
+    for (int i = 1; i < GROUPNUM; i++)
+    {
+        gradient[i] = gradient[i - 1] + group[i].pro;
     }
 
-    if(t == 1)
+    // 随机产生染色体的存活概率
+    for (int i = 0; i < GROUPNUM; i++)
     {
-        bestIndivisual.adapt = currentBest.adapt;
-        bestIndivisual.pro = currentBest.pro;
-        for(int i = 0; i < pointsNumber; i++)
-        {
-            bestIndivisual.point[i] = currentBest.point[i];
-        }
+        choosePro[i] = (qrand() % 100) / 100.0;
     }
-    else
+
+    // 选择能生存的染色体
+    for (int i = 0; i < GROUPNUM; i++)
     {
-        if(bestIndivisual.adapt < currentBest.adapt)
+        for (int j = 0; j < GROUPNUM; j++)
         {
-            bestIndivisual.adapt = currentBest.adapt;
-            bestIndivisual.pro = currentBest.pro;
-            for(int i = 0; i < pointsNumber; i++)
+            if (choosePro[i] < gradient[j])
             {
-                bestIndivisual.point[i] = currentBest.point[i];
+                choosed[i] = j; // 第i个位置存放第j个染色体
+                break;
             }
         }
     }
 
-    group[currentWorstIndex].adapt = bestIndivisual.adapt;
-    group[currentWorstIndex].pro = bestIndivisual.pro;
-    for(int i = 0;i < pointsNumber; i++)
+    // 拷贝种群
+    for (int i = 0; i < GROUPNUM; i++)
     {
-        group[currentWorstIndex].point[i] = bestIndivisual.point[i];
+        groupTemp[i].adapt = group[i].adapt;
+        groupTemp[i].pro = group[i].pro;
+        for (int j = 0; j < pointsNumber; j++)
+        {
+            groupTemp[i].point[j] = group[i].point[j];
+        }
     }
 
-//    double gradient[GROUPNUM];//梯度概率
-//    double choosePro[GROUPNUM];//选择染色体的随机概率
-//    int choosed[GROUPNUM];//选择了的染色体
-//                  //初始化梯度概率
-//    for (int i = 0; i < GROUPNUM; i++)
-//    {
-//        gradient[i] = 0.0;
-//        choosePro[i] = 0.0;
-//    }
-//    gradient[0] = group[0].pro;
+    // 数据更新
+    for (int i = 0; i < GROUPNUM; i++)
+    {
+        int temp = choosed[i];
+        group[i].adapt = groupTemp[temp].adapt;
+        group[i].pro = groupTemp[temp].pro;
+        for (int j = 0; j < pointsNumber; j++)
+        {
+            group[i].point[j] = groupTemp[temp].point[j];
 
-//    for (int i = 1; i < GROUPNUM; i++)
-//    {
-//        gradient[i] = gradient[i - 1] + group[i].pro;
-//    }
-
-//    //随机产生染色体的存活概率
-//    for (int i = 0; i < GROUPNUM; i++)
-//    {
-//        choosePro[i] = (qrand() % 100) / 100.0;
-//    }
-
-//    //选择能生存的染色体
-//    for (int i = 0; i < GROUPNUM; i++)
-//    {
-//        for (int j = 0; j < GROUPNUM; j++)
-//        {
-//            if (choosePro[i] < gradient[j])
-//            {
-//                choosed[i] = j; //第i个位置存放第j个染色体
-//                break;
-//            }
-//        }
-//    }
-//    //拷贝种群
-//    for (int i = 0; i < GROUPNUM; i++)
-//    {
-//        groupTemp[i].adapt = group[i].adapt;
-//        groupTemp[i].pro = group[i].pro;
-//        for (int j = 0; j < pointsNumber; j++)
-//        {
-//            groupTemp[i].point[j] = group[i].point[j];
-//        }
-//    }
-//    //数据更新
-//    for (int i = 0; i < GROUPNUM; i++)
-//    {
-//        int temp = choosed[i];
-//        group[i].adapt = groupTemp[temp].adapt;
-//        group[i].pro = groupTemp[temp].pro;
-//        for (int j = 0; j < pointsNumber; j++)
-//        {
-//            group[i].point[j] = groupTemp[temp].point[j];
-
-//        }
-//    }
+        }
+    }
 }
 
+// 变异函数
 void Tsp::variation()
 {
-    double variationPro[GROUPNUM]; //染色体的变异概率
-    int variationFlag[GROUPNUM];//染色体的变异情况
-    for (int i = 0; i < GROUPNUM; i++)//初始化
+    double variationPro[GROUPNUM]; // 染色体的变异概率
+    int variationFlag[GROUPNUM];// 染色体的变异情况
+
+    // 初始化
+    for (int i = 0; i < GROUPNUM; i++)
     {
         variationFlag[i] = 0;
     }
 
-    //随机产生变异概率
+    // 随机产生变异概率
     for (int i = 0; i < GROUPNUM; i++)
     {
         variationPro[i] = (qrand() % 100) / 100.0;
     }
-    //确定可以变异的染色体
+
+    // 确定可以变异的染色体
     for (int i = 0; i < GROUPNUM; i++)
     {
         if (variationPro[i] < VARIPRO)
@@ -246,7 +198,8 @@ void Tsp::variation()
             variationFlag[i] = 1;
         }
     }
-    //变异操作,即交换染色体的两个节点
+
+    // 变异操作，即交换染色体的两个节点
     for (int i = 0; i < GROUPNUM; i++)
     {
         if (variationFlag[i] == 1)
@@ -260,27 +213,28 @@ void Tsp::variation()
     }
 }
 
+// 繁殖函数
 void Tsp::breed()
 {
     int *map1 = new int[pointsNumber];
     int *map2 = new int[pointsNumber];
 
-    double breedPro[GROUPNUM];//染色体的交配概率
-    int breedFlag[GROUPNUM];//染色体的可交配情况
-//    int flag = 0;
-    //初始化
+    double breedPro[GROUPNUM];// 染色体的交配概率
+    int breedFlag[GROUPNUM];// 染色体的可交配情况
+
+    // 初始化
     for (int i = 0; i < GROUPNUM; i++)
     {
         breedFlag[i] = 0;
     }
 
-    //随机产生交配概率
+    // 随机产生交配概率
     for (int i = 0; i < GROUPNUM; i++)
     {
         breedPro[i] = (qrand() % 100) / 100.0;
     }
 
-    //确定可以交配的染色体
+    // 确定可以交配的染色体
     int t = 0;
     for (int i = 0; i < GROUPNUM; i++)
     {
@@ -290,13 +244,14 @@ void Tsp::breed()
             t++;
         }
     }
-    t -= t % 2;//t必须为偶数,产生t/2个交配断点
-    int dad = 0, mom = 0;     //temp1号染色体和temp2染色体交配
-    for (int i = 0; i < t / 2; i++)  //如果有5个染色体需要交配，但是实际上t/2代表只有4个染色体会真正的交配，剩下的1个再加上5个不需要交配的染色体直接进入下一代。
+    t -= t % 2;// t必须为偶数，产生t/2个交配断点
+    int dad = 0, mom = 0;
+    for (int i = 0; i < t / 2; i++)
     {
-        int head = qrand() % pointsNumber;//交配点1
-        int tail = qrand() % pointsNumber;//交配点2
-                                 //选出一个需要交配的染色体1
+        int head = qrand() % pointsNumber;// 交配点1
+        int tail = qrand() % pointsNumber;// 交配点2
+
+        //选出一个需要交配的染色体dad
         for (int j = dad; j < GROUPNUM; j++)
         {
             if (breedFlag[j] == 1)
@@ -305,7 +260,8 @@ void Tsp::breed()
                 break;
             }
         }
-        //选出另一个需要交配的染色体2与1交配
+
+        // 选出另一个需要交配的染色体mom与dad交配
         for (int j = dad + 1; j < GROUPNUM; j++)
         {
             if (breedFlag[j] == 1)
@@ -314,13 +270,15 @@ void Tsp::breed()
                 break;
             }
         }
-        //进行基因交配
-        if (head > tail) //保证point1<=point2
+
+        // 进行基因交配，首先保证head>tail
+        if (head > tail)
         {
             int temp = head;
             head = tail;
             tail = temp;
         }
+
         //初始化
         for(int i = 0; i < pointsNumber; i++)
         {
@@ -336,6 +294,7 @@ void Tsp::breed()
             parent2[j] = group[mom].point[j];
         }
 
+        // 两交配点中间部分互换
         for (int j = head; j < tail; j++)
         {
             int temp = group[dad].point[j];
@@ -345,6 +304,7 @@ void Tsp::breed()
             map2[group[mom].point[j]] = 1;
         }
 
+        // 解决冲突
         int k1 = tail, k2 = tail;
         for (int j = tail; j < pointsNumber; j++)
         {
@@ -388,6 +348,7 @@ void Tsp::breed()
             }
         }
 
+        // 比较子代与父代，留下较好的一代
         double disDad = getDis(parent1);
         double disMom = getDis(parent2);
         double disSon1 = getDis(group[dad].point);
@@ -444,6 +405,7 @@ int* Tsp::getOrder(int answer)
     return group[answer].point;
 }
 
+// 计算距离
 double Tsp::getDis(int *gene)
 {
     double sumDistance = 0;
