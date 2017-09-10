@@ -10,15 +10,13 @@ MyThread::~MyThread()
 {
     delete tsp;
     delete [] ans;
-    delete [] pointf;
 }
 
 
-void MyThread::setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf)
+void MyThread::setAttr(int pointsNumber, QPointF *pointf)
 {
-    this->tsp = tsp;
     this->pointsNumber = pointsNumber;
-    this->pointf = pointf;
+    this->tsp = new Tsp(pointsNumber, pointf);
 }
 
 

@@ -49,7 +49,7 @@ void PaintedWidget::paintEvent(QPaintEvent *event)
         painted = true;
     }
 
-    // 当处于连线状态和描点结束状态时，保证面板失焦后不重绘
+    // 当处于连线状态和描点结束状态时，保证窗口失焦后不重绘
     if(linking || painted)
     {
         painter.setPen(QPen(QColor(0, 0, 0), 6));

@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->progressBar->setValue(0);
 
     // 获取文件默认存储路径
-    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file directory.txt");
+    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file_directory.txt");
     if(!dirctoryFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         return;
@@ -144,8 +144,7 @@ void MainWindow::prepareLinking()
     linking = true;
     ui->paintedWidget->setDraw(false);
     ui->paintedWidget->setLinking(true);
-    Tsp *tsp = new Tsp(pointNumber + 1, ui->paintedWidget->getPoints());
-    t->setAttr(tsp, pointNumber + 1, ui->paintedWidget->getPoints());
+    t->setAttr(pointNumber + 1, ui->paintedWidget->getPoints());
     t->start();
 }
 
@@ -226,7 +225,7 @@ void MainWindow::setFileDirectory()
         fileDirectory = tmpFileDirectory;
     }
 
-    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file directory.txt");
+    QFile dirctoryFile("C:\\Users\\arsener\\Documents\\Qt\\tsp\\file_directory.txt");
     if(!dirctoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         return;

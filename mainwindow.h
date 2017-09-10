@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "tsp.h"
 #include "mythread.h"
 #include "paintedwidget.h"
 #include <QFile>

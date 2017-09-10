@@ -2,11 +2,11 @@
 #define MYTHREAD_H
 
 #include "tsp.h"
-#include <QThread>
-#include <QLineEdit>
-#include <QPainter>
 #include <QPen>
+#include <QThread>
 #include <QPointF>
+#include <QPainter>
+#include <QLineEdit>
 
 class MyThread : public QThread
 {
@@ -15,7 +15,7 @@ class MyThread : public QThread
 public:
     MyThread();
     ~MyThread();
-    void setAttr(Tsp *tsp, int pointsNumber, QPointF *pointf);
+    void setAttr(int pointsNumber, QPointF *pointf);
 
 signals:
     void returnResult(int*);
@@ -28,7 +28,6 @@ private:
     int pointsNumber;
     int *ans;
     Tsp *tsp;
-    QPointF *pointf;
 };
 
 #endif // MYTHREAD_H
